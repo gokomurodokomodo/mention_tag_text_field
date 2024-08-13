@@ -80,6 +80,9 @@ class _MentionTagTextFieldExampleState
         ('@Emily Johnson', User(id: 1, name: 'Emily Johnson'), null)
       ],
       onMention: onMention,
+      onChanged: (text){
+        print(_controller.formattedText);
+      },
       mentionTagDecoration: MentionTagDecoration(
           mentionStart: ['@', '#'],
           mentionBreak: ' ',
@@ -120,9 +123,9 @@ class _MentionTagTextFieldExampleState
                   _controller.addMention(
                       label:
                           "${searchResults[index]['firstName']} ${searchResults[index]['lastName']}",
-                      data: User(
-                          id: searchResults[index]['id'],
-                          name:
+                      data: MentionTagModel(
+                          mentionUserId: searchResults[index]['id'].toString(),
+                          mentionUserName:
                               "${searchResults[index]['firstName']} ${searchResults[index]['lastName']}"),
                       stylingWidget: _controller.mentions.length == 1
                           ? MyCustomTag(
@@ -132,6 +135,7 @@ class _MentionTagTextFieldExampleState
                           : null);
                   mentionValue = null;
                   setState(() {});
+                  print(_controller.formattedText);
                 },
                 child: ListTile(
                   leading: CircleAvatar(

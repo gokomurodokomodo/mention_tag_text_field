@@ -4,6 +4,8 @@ import 'package:mention_tag_text_field/src/mention_tag_data.dart';
 import 'package:mention_tag_text_field/src/mention_tag_decoration.dart';
 import 'package:mention_tag_text_field/src/string_extensions.dart';
 
+import 'mention_tag_model.dart';
+
 class MentionTagTextEditingController extends TextEditingController {
   MentionTagTextEditingController() {
     addListener(_updateCursorPostion);
@@ -51,6 +53,15 @@ class MentionTagTextEditingController extends TextEditingController {
     });
   }
 
+  String get formattedText {
+    final List<MentionTagElement> tempList = List.from(_mentions);
+    return super.text.replaceAllMapped(Constants.mentionEscape, (match) {
+      final MentionTagElement removedMention = tempList.removeAt(0);
+      final String mention = removedMention.data?.formattedText ?? '';
+      return mention;
+    });
+  }
+
   /// The mentions or tags will be removed automatically using backspaces in TextField.
   /// If you encounter a scenario where you need to remove a custom tag or mention on some action, you need to call remove and give it index of the mention or tag in _controller.mentions.
   ///
@@ -87,7 +98,7 @@ class MentionTagTextEditingController extends TextEditingController {
       _mentions.add(MentionTagElement(
           mentionSymbol: mentionSymbol,
           mention: mention,
-          data: mentionTuple.$2,
+          data: const MentionTagModel(mentionUserId: '', mentionUserName: ''),
           stylingWidget: mentionTuple.$3));
     }
   }
@@ -102,7 +113,7 @@ class MentionTagTextEditingController extends TextEditingController {
   /// If you skip some values, mentioned labels will be added in those places.
   void addMention({
     required String label,
-    Object? data,
+    MentionTagModel? data,
     Widget? stylingWidget,
   }) {
     final indexCursor = selection.base.offset;
